@@ -1,37 +1,43 @@
 \documentclass{article}
+
+
 \usepackage{arxiv}
 
-\usepackage[utf8]{inputenc}
-\usepackage[english, russian]{babel}
-\usepackage[T1]{fontenc}
-\usepackage{url}
-\usepackage{booktabs}
-\usepackage{amsfonts}
-\usepackage{nicefrac}
-\usepackage{microtype}
-\usepackage{lipsum}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsmath}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}		% Can be removed after putting your text content
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{multicol}
 \usepackage{natbib}
 \usepackage{doi}
 
 
 
-\title{A template for the \emph{arxiv} style}
+\title{Boosting ARTM with PyTorch}
 
-\author{ David S.~Hippocampus\thanks{Use footnote for providing further
-		information about author (webpage, alternative
-		address)---\emph{not} for acknowledging funding agencies.} \\
-	Department of Computer Science\\
-	Cranberry-Lemon University\\
-	Pittsburgh, PA 15213 \\
-	\texttt{hippo@cs.cranberry-lemon.edu} \\
+%\date{September 9, 1985}	% Here you can change the date presented in the paper title
+%\date{} 					% Or removing it
+
+\author{ \hspace{1mm} Ilya Diyakov \\
+	Department of Mathematical Methods of Forecasting\\
+	Moscow State University\\
+	Moscow \\
+	\texttt{s02210378@gse.cs.msu.ru} \\
 	%% examples of more authors
 	\And
-	Elias D.~Striatum \\
-	Department of Electrical Engineering\\
-	Mount-Sheikh University\\
-	Santa Narimana, Levand \\
-	\texttt{stariate@ee.mount-sheikh.edu} \\
+	\hspace{1mm} Konstantin Vorontsov \\
+	Department of Mathematical Methods of Forecasting\\
+	Moscow State University\\
+	Moscow \\
+	\texttt{vokov@forecsys.ru} \\
 	%% \AND
 	%% Coauthor \\
 	%% Affiliation \\
@@ -48,9 +54,14 @@
 	%% Address \\
 	%% \texttt{email} \\
 }
-\date{}
 
-\renewcommand{\shorttitle}{\textit{arXiv} Template}
+% Uncomment to remove the date
+%\date{}
+
+% Uncomment to override  the `A preprint' in the header
+%\renewcommand{\headeright}{Technical Report}
+%\renewcommand{\undertitle}{Technical Report}
+\renewcommand{\shorttitle}{Boosting ARTM with PyTorch}
 
 %%% Add PDF metadata to help others organize their library
 %%% Once the PDF is generated, you can check the metadata with
@@ -66,93 +77,217 @@ pdfkeywords={First keyword, Second keyword, More},
 \maketitle
 
 \begin{abstract}
-	\lipsum[1]
+	Topic modelling is a fast and efficient technique for text analysis. Currently, the most popular approaches for topic modelling are BPTM (bayesian probabilistic topic models) and ARTM (additive regularization for topic modelling). Recently, a new emerging field, \emph{neural topic modelling}, became an increasingly popular research area. ARTM is a newer approach to this problem, compared to LDA, and it has shown recent success in solving many applied problems in this area. The state-of-the-art model for ARTM is currently BigARTM, which uses expectation-maximization algorithm. In this paper, we propose a different approach for solving the ARTM optimization problem, making use of popular autograd framework PyTorch for efficient implementation.
 \end{abstract}
 
 
-\keywords{First keyword \and Second keyword \and More}
+% keywords can be removed
+\keywords{Clusterization \and Topic Modelling \and ARTM}
 
-\section{Introduction}
-\lipsum[2]
-\lipsum[3]
 
-\section{Headings: first level}
-\label{sec:headings}
+\section{\centering Introduction}
+\label{sec:introduction}
+Topic modelling is a relatively new approach for text analysis and clusterization, which has shown success in many applications in these areas. Approaches emerged during the researches in NLP area also proved useful in a wide variety of problems from another domains like analysis of banking transaction data, image annotation or search for motifs in nucleotide and amino acid sequences. It makes topic modelling an efficient and universal approach for summarization, generalization, and extraction of specific features from unstructured data. \\
 
-\lipsum[4] See Section \ref{sec:headings}.
+BPTMs, that generates the data from the pre-specified distributions, have been the most popular and successful representation of topic models. However, such approach has several significant drawbacks: \textbf{1)} Due to the use of specific pre-defined distributions in each problem, success in one problem cannot be easily generalized to the whole area or transferred to another area. \textbf{2)} The solution stability of BPTMs cannot be guaranteed. \textbf{3)} The scaling of trained model's inference or making use of parallel computing and GPUs is a challenging task. \textbf{4)} There is no modular realization of proposed models, so it is hard to add regularization to an already solved problem. \\
 
-\subsection{Headings: second level}
-\lipsum[5]
+One of the main advantages of ARTM over BPTM is that its theoretical basis is easy to understand. ARTM successes in creating topic modelling algorithms which can be easily interpreted and scaled. There is also no need for a prior knowledge of the structure of data we are working with. These advantages make it a good alternative for Bayesian approach. Our research is aimed at improving speed and quality of the state-of-the-art model for ARTM, BigARTM. Our new model outperforms BigARTM in speed, maintaining the quality. For better understanding of our new approach, we first outline some theoretical background. \\
+
+
+\section{\centering Theoretical Background}
+\label{sec:theoretical-background}
+Let us define the problem ARTM states and overview the solution of this problem proposed in BigARTM model. Then, we will propose a different approach for solving the same problem and compare these solutions.\\
+
+\subsection{The classic problem of topic modelling}
+Given the collection of documents $D$ with vocabulary $W$, described as a conditional distribution
 \begin{equation}
-	\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
+    p(w|d) = \frac{n_{dw}}{n_{d}} \quad w \in W, d \in D,
 \end{equation}
+where $n_{dw}$ is the number of occurrences of the word $w$ in the document $d$, and $n_{d}$ is the total number of words in the document $d$. This distribution can be rewritten as
+\begin{equation}
+    p(w|d) = \sum_{t \in T}p(w|t)p(t|d) = \sum_{t \it T} \phi_{wt}\theta_{td} \quad w \in W, d \in D,
+\end{equation}
+where $T$ is the set of topics we want to extract. As can be seen from the equation, the number of topics can be varied and the content of each topic will change accordingly. The aim is to find conditional distributions $p(w|t)$ and $p(t|d)$ in the form of matrices $\Phi$ and $\Theta$ given the distribution $p(w|d)$. 
 
-\subsubsection{Headings: third level}
-\lipsum[6]
+\subsection{ARTM Problem Statement}
+The proposed problem is the problem of stochastic matrix factorization. For it to have a unique solution, it has to be regularized as follows:
+\begin{equation}
+    \sum_{d, w} n_{dw} \ln \sum_{t} \phi_{wt}\theta_{td} + R(\Phi, \Theta) \rightarrow \max_{\Phi, \Theta}
+    \label{likelihood}
+\end{equation}
+Where $R(\Phi, \Theta$ --- additive regularization term. This is the classic problem of ARTM. BigARTM authors proposed a solution using expectation-maximization algorithm:
+\begin{equation}
+    \begin{cases}
+        p_{tdw} \equiv p(t|d, w) = \underset{t \in T}{norm} \\
+        \phi_{wt} = \underset{w \in W}{norm}\left(n_{wt} + \phi_{wt}\frac{\partial R}{\partial \phi_{wt}}\right), \quad n_{wt} = \underset{d \in D}{\sum} n_{dw}p_{tdw} \\
+        \theta_{td} = \underset{t \in T}{norm}\left(n_{td} + \theta_{td}\frac{\partial R}{\partial \theta_{td}}\right), \quad n_{td} = \underset{w \in d}{\sum} n_{dw}p_{tdw} \\
+    \end{cases}
+    \label{em}
+\end{equation}
+Authors have proposed several technical optimizations for the algorithm, but the approach remained the same. Note, that on the maximization step, we have to find partial derivatives of regularization term. \\
 
-\paragraph{Paragraph}
-\lipsum[7]
+Now, we can notice that the function we want to maximize \ref{likelihood}  can be easily optimized directly with any of the autograd frameworks. So our first new approach for solving this problem is to use PyTorch for automatic differentiation. Among other advantages of this approach (see \ref{sec:experiments}), it allows using custom user's regularization functions.
 
+\section{\centering Implementation Details}
+\label{sec:implementation}
+The program provides compatibility with scikit-learn functions and provides the same interfaces for user. We tried to make our implementation easy-to-use for beginners and provide a clear and flexible framework for advanced users.\\
 
-
-\section{Examples of citations, figures, tables, references}
-\label{sec:others}
-
-\subsection{Citations}
-Citations use \verb+natbib+. The documentation may be found at
-\begin{center}
-	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-
-Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
-
-\subsection{Figures}
-\lipsum[10]
-See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
-\lipsum[11]
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.5\textwidth]{../figures/log_reg_cs_exp.eps}
-	\caption{Sample figure caption.}
-	\label{fig:fig1}
-\end{figure}
-
-\subsection{Tables}
-See awesome Table~\ref{tab:table}.
-
-The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
-\begin{center}
-	\url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-
-
-\begin{table}
-	\caption{Sample table title}
-	\centering
-	\begin{tabular}{lll}
-		\toprule
-		\multicolumn{2}{c}{Part}                   \\
-		\cmidrule(r){1-2}
-		Name     & Description     & Size ($\mu$m) \\
-		\midrule
-		Dendrite & Input terminal  & $\sim$100     \\
-		Axon     & Output terminal & $\sim$10      \\
-		Soma     & Cell body       & up to $10^6$  \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:table}
+\begin{table}[htbp]
+\centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+         & Proposed model & BigARTM \\
+        \hline
+        Parallel calculation on cpu     & No                & Yes \\
+        \hline
+        GPU enabled                     & Yes               & No \\
+        \hline
+        Input types                     & torch.Tensor,     & Vowpal Wabbit, \\
+                                        & pandas.DataFrame  & UCI bow \\
+        \hline
+    \end{tabular}
+\caption{Brief comparison of BigARTM and proposed model}
+\label{tab:model-comparison}
 \end{table}
 
-\subsection{Lists}
-\begin{itemize}
-	\item Lorem ipsum dolor sit amet
-	\item consectetur adipiscing elit.
-	\item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
-\end{itemize}
+It operates with more common torch \texttt{Tensor} and pandas \texttt{DataFrame} types, unlike BigARTM, which uses \texttt{Vowpal Wabbit} or \texttt{UCI bow} formats for input data. The main goal of the program is to provide functionality for future research in the field and draw attention of other researchers who needs a fast and reliable software for their work.\\
+
+\begin{figure}[h]
+\centering
+    \begin{tikzpicture}[every node/.style={font=\bfseries}]
+        \node[draw, circle, minimum size=2cm] (phi) at (0,0) {$\Phi$};
+        \node[draw, circle, minimum size=2cm] (theta) at (0,-6) {$\Theta$};
+
+        \node[draw, circle, minimum size=2cm] (output) at (4,-1) {Output};
+        \node[draw, circle, minimum size=2cm] (reg) at (4,-5) {Regularization};
+
+        \node[draw, circle, minimum size=1cm, align=center] (loss1) at (8,-2) {Loss w/o \\ regularization};
+
+        \node[draw, circle, minimum size=2cm] (data) at (12,0) {Data};
+        \node[draw, circle, minimum size=2cm] (loss2) at (12,-3) {Loss};
+
+        \draw[->] (phi) -- (output) node[draw, rectangle, midway, fill=white] {@};
+        \draw[->] (theta) -- (output) node[draw, rectangle, midway, fill=white] {@};
+        \draw[->] (phi) -- (reg);
+        \draw[->] (theta) -- (reg);
+
+        \draw[->] (output) -- (loss1) node[draw, rectangle, midway, fill=white] {$\log$};
+
+        \draw[->] (loss1) -- (loss2) node[draw, rectangle, midway, fill=white] {+};
+        \draw[->] (reg) -- (loss2) node[draw, rectangle, midway, fill=white] {+};
+        \draw[->] (data) -- (loss1) node[draw, rectangle, midway, fill=white] {*};
+    \end{tikzpicture}
+    \caption{Calculation graph}
+    \label{fig:calc-graph}
+\end{figure}
+Our implementation of the proposed algorithm is lighter and easier to maintain, because most of the optimization falls on the PyTorch module. Also, with the support of PyTorch, we can utilize GPU for training. This makes inference much faster compared to BigARTM \ref{sec:experiments}.
+
+\section{\centering Experiments}
+\label{sec:experiments}
+\subsection{Data}
+We evaluate the proposed model on the 20newsgroups dataset, which contains a collection of approximately 20,000 newsgroup documents, partitioned nearly evenly across 20 different newsgroups. We extracted approximately 70,000 unique words as vocabulary in bag-of-words format.
+
+\subsection{Quantitative Results}
+We report our quantitative results in Table \ref{tab:quantitative-results}, training both models on 20 steps. Both models were compared without regularization (PLSA). To measure topic similarity, we used the Hungarian algorithm to find similar topics using cosine metric between top-3 words as distance between topics. Then we calculated the mean distance across all distances between the most similar topics. All metrics were aggregated over 100 runs. \\
+
+\begin{table}[htbp]
+\centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Metric & Ours, 10 topics & BigARTM, 10 topics & Ours, 120 topics & BigARTM, 120 topics \\
+        \hline
+        Perplexity@10step   & 3750 & 2600 & 2780 & 1170 \\
+        \hline
+        Perplexity@20step   & 2800 & 2520 & 1310 & 1120 \\
+        \hline
+        Perplexity@30step   & 2670 & 2500 & 1190 & 1110 \\
+        \hline
+        Training time CPU (30 steps, sec)  & 400 & 30 & 1400 & 130 \\
+        \hline
+        Training time GPU (30 steps, sec) & 40 & --- & 40 & --- \\
+        \hline
+        Topic similarity    & \multicolumn{2}{|c|}{0.65} & \multicolumn{2}{|c|}{0.4} \\
+        \hline
+    \end{tabular}
+\caption{Quantitative results training BigARTM and proposed models}
+\label{tab:quantitative-results}
+\end{table}
+
+Overall, our implementation shows very similar results with BigARTM, but successes in speeding up the inference with GPU. For both models, only 20 steps are sufficient to generate interpretable topics from the given data. Note that both models are producing many similar topics, which shows that the algorithm's principle remains the same. \\
+
+The results show that our model's training time cannot compete with efficient CPU implementation of BigARTM, but on GPU it gains better results. Training time on GPU does not depend on number of topics because of efficient parallelization. This demonstrates the potential of the proposed model in large datasets.
+
+\subsection{Qualitative Results}
+Here, we analyze our results in terms of top k words, representing the topic, focusing on models with 10 topics. These particular examples demonstrate the same logic of clustering in both models.\\
+
+\begin{multicols}{2}
+\section*{BigARTM, top-5 topic words}
+topic 1: max, q, r, g, p\\
+topic 2: one, would, say, people, write\\
+topic 3: game, team, line, subject, organization\\
+topic 4: would, people, write, gun, article\\
+topic 5: god, hell, atheist, line, subject\\
+topic 6: x, file, use, window, program\\
+topic 7: say, armenian, people, one, go\\
+topic 8: line, subject, get, organization, car\\
+topic 9: space, organization, subject, line, db\\
+topic 10: line, subject, organization, use, university\\
+
+\columnbreak
+
+\section*{Ours, top-5 topic words}
+topic 1: max, q, r, g, p\\
+topic 2: line, one, get, subject, use\\
+topic 3: god, would, say, one, people\\
+topic 4: line, subject, organization, university, article\\
+topic 5: game, team, line, drive, subject\\
+topic 6: say, armenian, one, go, people\\
+topic 7: x, file, line, use, subject\\
+topic 8: use, line, subject, organization, window\\
+topic 9: would, people, write, get, article\\
+topic 10: use, key, system, data, space\\
+\end{multicols}
+
+\section{\centering Conclusion}
+The proposed model seems to be a promising direction of development, offering accessibility and lightness to the user, the ability to flexibly configure system components and integrate custom regularizers. One of the most important advantages of the developed program is its efficiency. Also, the proposed algorithm can become the first step of ARTM's integration with deep neural networks. This can solve several crucial problems of modern neural networks. Among them, we can highlight the selection of the learning rate (ARTM does not need this parameter, \ref{sec:theoretical-background}) as well as the interpretability of the inner layers as a set of <<topics>>, which model extracts from data.
+
+% \subsection{Citations}
+% Citations use \verb+natbib+. The documentation may be found at
+% \begin{center}
+% 	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
+% \end{center}
+
+% Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
 
 
-\bibliographystyle{unsrtnat}
-\bibliography{references}
+
+% \bibliographystyle{unsrtnat}
+% \bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
+
+%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
+% \begin{thebibliography}{1}
+
+% 	\bibitem{kour2014real}
+% 	George Kour and Raid Saabne.
+% 	\newblock Real-time segmentation of on-line handwritten arabic script.
+% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
+% 			International Conference on}, pages 417--422. IEEE, 2014.
+
+% 	\bibitem{kour2014fast}
+% 	George Kour and Raid Saabne.
+% 	\newblock Fast classification of handwritten on-line arabic characters.
+% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
+% 			International Conference of}, pages 312--318. IEEE, 2014.
+
+% 	\bibitem{hadash2018estimate}
+% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
+% 	Jacovi.
+% 	\newblock Estimate and replace: A novel approach to integrating deep neural
+% 	networks with existing applications.
+% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
+
+% \end{thebibliography}
+
 
 \end{document}
