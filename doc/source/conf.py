@@ -15,14 +15,14 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../../src/'))
 
-from mylib import __version__
+from pyartm import __version__
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'MyLib'
-copyright = '2022, Andrey Grabovoy'
-author = 'Andrey Grabovoy'
+project = 'PyARTM'
+copyright = '2024, Diyakov Ilya'
+author = 'Diyakov Ilya'
 
 version = __version__
 master_doc = 'index'
