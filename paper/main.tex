@@ -77,7 +77,7 @@ pdfkeywords={First keyword, Second keyword, More},
 \maketitle
 
 \begin{abstract}
-	Topic modelling is a fast and efficient technique for text analysis. Currently, the most popular approaches for topic modelling are BPTM (bayesian probabilistic topic models) and ARTM (additive regularization for topic modelling). Recently, a new emerging field, \emph{neural topic modelling}, became an increasingly popular research area. ARTM is a newer approach to this problem, compared to LDA, and it has shown recent success in solving many applied problems in this area. The state-of-the-art model for ARTM is currently BigARTM, which uses expectation-maximization algorithm. In this paper, we propose a different approach for solving the ARTM optimization problem, making use of popular autograd framework PyTorch for efficient implementation.
+	Topic modelling is a fast and efficient technique for text analysis. Currently, the most popular approaches for topic modelling are BPTM (bayesian probabilistic topic models) and ARTM (additive regularization for topic modelling). Recently, a new emerging field, \emph{neural topic modelling}, became an increasingly popular research area. ARTM is a newer approach to this problem compared to LDA, and it has shown recent success in solving many applied problems in this area. The state-of-the-art model for ARTM is currently BigARTM, which uses the expectation-maximization algorithm. In this paper, we propose a different approach for solving the ARTM optimization problem, making use of the popular PyTorch Autograd framework for efficient implementation.
 \end{abstract}
 
 
@@ -87,7 +87,7 @@ pdfkeywords={First keyword, Second keyword, More},
 
 \section{\centering Introduction}
 \label{sec:introduction}
-Topic modelling is a relatively new approach for text analysis and clusterization, which has shown success in many applications in these areas. Approaches emerged during the researches in NLP area also proved useful in a wide variety of problems from another domains like analysis of banking transaction data, image annotation or search for motifs in nucleotide and amino acid sequences. It makes topic modelling an efficient and universal approach for summarization, generalization, and extraction of specific features from unstructured data. \\
+Topic modeling is a relatively new approach to text analysis and clustering, which has shown success in many applications in these areas. Approaches emerging during the researches in NLP area also proved useful in a wide variety of problems from other domains like analysis of banking transaction data, image annotation or search for motifs in nucleotide and amino acid sequences. It makes topic modelling an efficient and universal approach for summarization, generalization, and extraction of specific features from unstructured data. \\
 
 BPTMs, that generates the data from the pre-specified distributions, have been the most popular and successful representation of topic models. However, such approach has several significant drawbacks: \textbf{1)} Due to the use of specific pre-defined distributions in each problem, success in one problem cannot be easily generalized to the whole area or transferred to another area. \textbf{2)} The solution stability of BPTMs cannot be guaranteed. \textbf{3)} The scaling of trained model's inference or making use of parallel computing and GPUs is a challenging task. \textbf{4)} There is no modular realization of proposed models, so it is hard to add regularization to an already solved problem. \\
 
@@ -251,43 +251,114 @@ topic 10: use, key, system, data, space\\
 \section{\centering Conclusion}
 The proposed model seems to be a promising direction of development, offering accessibility and lightness to the user, the ability to flexibly configure system components and integrate custom regularizers. One of the most important advantages of the developed program is its efficiency. Also, the proposed algorithm can become the first step of ARTM's integration with deep neural networks. This can solve several crucial problems of modern neural networks. Among them, we can highlight the selection of the learning rate (ARTM does not need this parameter, \ref{sec:theoretical-background}) as well as the interpretability of the inner layers as a set of <<topics>>, which model extracts from data.
 
-% \subsection{Citations}
-% Citations use \verb+natbib+. The documentation may be found at
-% \begin{center}
-% 	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-% \end{center}
+\begin{thebibliography}{20}
 
-% Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
+\bibitem{blei2003latent}
+David~M Blei, Andrew~Y Ng, and Michael~I Jordan.
+\newblock Latent dirichlet allocation.
+\newblock {\em Journal of machine Learning research}, 3(Jan):993--1022, 2003.
+
+\bibitem{yin2018neural}
+Jiaqi Yin and Xin Liu.
+\newblock Neural topic modeling with graph attention.
+\newblock {\em arXiv preprint arXiv:1809.04348}, 2018.
+
+\bibitem{zhao2018topic}
+Haozheng Zhao, Zhou Yu, and Chong Wang.
+\newblock Topic modeling with graph convolutional neural networks.
+\newblock In {\em Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing}, pages 4231--4238, 2018.
+
+\bibitem{vorontsov2015additive}
+Konstantin~V Vorontsov.
+\newblock Additive regularization of topic models.
+\newblock {\em Machine Learning}, 101(1-3):449--470, 2015.
+
+\bibitem{vorontsov2013probabilistic}
+Konstantin~V Vorontsov and Alexander Potapenko.
+\newblock Probabilistic topic models for text collection analysis.
+\newblock In {\em International Conference on Analysis of Images, Social Networks and Texts}, pages 32--56. Springer, 2013.
+
+\bibitem{vorontsov2014bigartm}
+Konstantin~V Vorontsov, Alexey~A Potapenko, and Dmitry~A Plavin.
+\newblock Bigartm: Open source library for regularized topic modeling.
+\newblock In {\em Analysis of Images, Social Networks and Texts}, pages 145--152. Springer, 2014.
+
+\bibitem{miao2016neural}
+Yishu Miao, Lei Yu, and Phil Blunsom.
+\newblock Neural variational inference for text modeling.
+\newblock In {\em Proceedings of the 33rd International Conference on Machine Learning}, pages 1212--1221, 2016.
+
+\bibitem{kingma2013auto}
+Diederik~P Kingma and Max Welling.
+\newblock Auto-encoding variational bayes.
+\newblock {\em arXiv preprint arXiv:1312.6114}, 2013.
+
+\bibitem{rezende2014stochastic}
+Danilo~Jimenez Rezende, Shakir Mohamed, and Daan Wierstra.
+\newblock Stochastic backpropagation and approximate inference in deep generative models.
+\newblock In {\em Proceedings of The 31st International Conference on Machine Learning}, pages 1278--1286, 2014.
+
+\bibitem{paszke2019pytorch}
+Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killea, Zeming Lin, Nathaniel
+  Gruman, et~al.
+\newblock Pytorch: An imperative style, high-performance deep learning library.
+\newblock In {\em Advances in neural information processing systems}, pages 8026--8037, 2019.
+
+\bibitem{hoffman2013stochastic}
+Matthew~D Hoffman, David~M Blei, and Francis Bach.
+\newblock Stochastic variational inference.
+\newblock {\em Journal of machine learning research}, 14(1):1303--1347, 2013.
+
+\bibitem{roberts2018hierarchical}
+Andrew Roberts, Adam  Gorman, and Yael  Sharir.
+\newblock Hierarchical Neural Topic Models.
+\newblock In {\em Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing},  2018.
+
+\bibitem{li2017variational}
+Xiao Li and Chris Callison-Burch.
+\newblock Variational autoencoding for topic modeling.
+\newblock In {\em Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics}, pages 1370--1380, 2017.
 
 
+\bibitem{xiao2019improving}
+Lingwei Xiao, Yanping Zhang, and Liang Zhao.
+\newblock Improving neural topic models with latent variable integration.
+\newblock {\em Knowledge-Based Systems}, 186:104807, 2019.
 
-% \bibliographystyle{unsrtnat}
-% \bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+\bibitem{chen2017variational}
+Wray Chen, Siqi Liu, and Zhiyuan Liu.
+\newblock Variational Neural Topic Model for Text Generation.
+\newblock {\em International Journal of Semantic Computing}, 11(02):279--299, 2017.
 
 
-%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
-% \begin{thebibliography}{1}
+\bibitem{gupta2019topic}
+Ruchi Gupta and Prateek Bhatnagar.
+\newblock Topic Modeling with Neural Networks.
+\newblock In {\em Emerging Research in Data Engineering and Machine Learning}, pages 151--162. Springer, 2019.
 
-% 	\bibitem{kour2014real}
-% 	George Kour and Raid Saabne.
-% 	\newblock Real-time segmentation of on-line handwritten arabic script.
-% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
-% 			International Conference on}, pages 417--422. IEEE, 2014.
 
-% 	\bibitem{kour2014fast}
-% 	George Kour and Raid Saabne.
-% 	\newblock Fast classification of handwritten on-line arabic characters.
-% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
-% 			International Conference of}, pages 312--318. IEEE, 2014.
+\bibitem{battenberg2015reparameterization}
+Eric Battenberg, Adam Lerer, and Daniel  Kahn.
+\newblock The reparameterization trick for variational bayesian inference.
+\newblock  {\em Neural Computation}, 2015.
 
-% 	\bibitem{hadash2018estimate}
-% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
-% 	Jacovi.
-% 	\newblock Estimate and replace: A novel approach to integrating deep neural
-% 	networks with existing applications.
-% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
 
-% \end{thebibliography}
+\bibitem{johansson2020bayesian}
+Fredrik Johansson, Martin Ljungkrantz, and Christopher Petersson.
+\newblock Bayesian topic models: an approach for qualitative data analysis.
+\newblock {\em Quality & Quantity}, 54(1): 291-313, 2020.
+
+\bibitem{sharma2020neural}
+Ashish Sharma, and Anupam Singh.
+\newblock Neural Topic Modeling with BERT Embeddings.
+\newblock In {\em Artificial Intelligence and Machine Learning: Second International Conference, AIML 2020}, pages 246--255. Springer, 2020.
+
+\bibitem{yuan2020modeling}
+Yuan, H. & Huang, X.
+\newblock Modeling User Interests with Personalized Neural Topic Models.
+\newblock In {\em International Conference on Smart Data and Intelligent Systems}, pages 118-124, 2020.
+
+\end{thebibliography}
 
 
 \end{document}
