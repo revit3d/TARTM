@@ -34,10 +34,6 @@
 \usepackage{caption}
 \captionsetup{skip=0pt,belowskip=0pt}
 
-\newtheorem{rustheorem}{Теорема}
-\newtheorem{russtatement}{Утверждение}
-\newtheorem{rusdefinition}{Определение}
-
 % colors
 \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
 \definecolor{darkcyan}{rgb}{0.0, 0.55, 0.55}
@@ -45,148 +41,87 @@
 \AtBeginEnvironment{figure}{\setcounter{subfigure}{0}}
 
 \captionsetup[subfloat]{labelformat=empty}
-
-%----------------------------------------------------------------------------------------------------------
-
-\title[Пример слайдов по работе]{Пример слайдов по работе \\ курса}
-\author{И.\,О.\,Фамилия}
-
-\institute[]{Московский физико-технический институт}
-\date[2022]{\small 10\;февраля\;2022\,г.}
-
-%---------------------------------------------------------------------------------------------------------
 \begin{document}
 
-\begin{frame}
-\titlepage
-\end{frame}
-
-%----------------------------------------------------------------------------------------------------------
-\section{Слайд об исследованиях}
-\begin{frame}{Слайд об исследованиях}
-\bigskip
-Исследуется проблема \ldots.
-\begin{block}{Цель исследования~---}
-предложить метод \ldots.
-\end{block}
-\begin{block}{Требуется предложить}
-\justifying
-\begin{enumerate}[1)]
-\item метод \ldots,
-\item метод \ldots,
-\item метод \ldots.
-\end{enumerate}
-\end{block}
-\begin{block}{Решение}
-Для \ldots.
-\end{block}
-\end{frame}
 
 %---------------------------------------------------------------------------------------------------------
-\section{Постановка задачи \ldots}
-\begin{frame}{Постановка задачи \ldots}
-Заданы
-\begin{enumerate}[1)]
-    \item признаки \ldots,
-    \item целевая переменная \ldots,
-    \item \ldots.
-\end{enumerate}
-
-\ldots
-
-\bigskip
-
-Требуется выбрать модель \ldots из множества
-\[
-	\mathfrak{G} = \left\{\mathbf{g}| \mathbf{g}:\mathbb{R}^{n} \to \mathbb{Y}^\prime\right\}.
-\]
-Оптимизационная задача \ldots:
-\[
-	\mathbf{g} = \arg\min_{\mathbf{g} \in \mathfrak{G}} \mathcal{L}\bigr(\ldots\bigr),
-\]
-где $\mathcal{L}$~--- функция ошибки.
-
-\bigskip
-\footnotetext[1]{\textit{Lopez-Paz D., Bottou L., Scholkopf B., Vapnik V.} Unifying distillation and privileged information // ICLR, 2016.}
-\footnotetext[2]{\textit{Hinton G., Vinyals O., Dean J.} Distilling the knowledge in a neural network // NIPS, 2015.}
+\section{Ensemble}
+\begin{frame}{Theoretical background}
+    The proposed problem is the problem of stochastic matrix factorization. For it to have a unique solution, it has to be regularized as follows:
+\begin{equation}
+    \sum_{d, w} n_{dw} \ln \sum_{t} \phi_{wt}\theta_{td} + R(\Phi, \Theta) \rightarrow \max_{\Phi, \Theta}
+    \label{likelihood}
+\end{equation}
+Where $R(\Phi, \Theta$) --- additive regularization term. This is the classic problem of ARTM. BigARTM authors proposed a solution using expectation-maximization algorithm:
+\begin{equation}
+    \begin{cases}
+        p_{tdw} \equiv p(t|d, w) = \underset{t \in T}{norm} \\
+        \phi_{wt} = \underset{w \in W}{norm}\left(n_{wt} + \phi_{wt}\frac{\partial R}{\partial \phi_{wt}}\right), \quad n_{wt} = \underset{d \in D}{\sum} n_{dw}p_{tdw} \\
+        \theta_{td} = \underset{t \in T}{norm}\left(n_{td} + \theta_{td}\frac{\partial R}{\partial \theta_{td}}\right), \quad n_{td} = \underset{w \in d}{\sum} n_{dw}p_{tdw} \\
+    \end{cases}
+    \label{em}
+\end{equation}
 \end{frame}
 
-%----------------------------------------------------------------------------------------------------------
-\section{Предложенный метод \ldots}
-\begin{frame}{Предложенный метод \ldots}
-~\\[-1mm]
-Заданы
-\begin{enumerate}[1)]
-	\item \ldots,
-	\item \ldots.
-\end{enumerate}
-
-\medskip
-Параметрические семейства:
-\[
-\setlength\abovedisplayskip{0pt}
-\mathfrak{F} = \left\{\mathbf{f}| \mathbf{f} = \text{softmax}\bigr(\mathbf{v}\bigr(\mathbf{x}\bigr)/T\bigr), \quad \mathbf{v}: \mathbb{R}^{n} \to \mathbb{R}^K \right\},
-\]
-\[
-\mathfrak{G} = \left\{\mathbf{g}| \mathbf{g} = \text{softmax}\bigr(\mathbf{z}\bigr(\mathbf{x}\bigr)/T\bigr), \quad \mathbf{z}: \mathbb{R}^n \to \mathbb{R}^K \right\},
-\]
-где~\ldots.
-
-\medskip
-Функция ошибки
-\[
-\setlength\abovedisplayskip{0pt}
-\begin{aligned}
-   \mathcal{L}\bigr(\mathbf{g}\bigr) = &-\sum_{i=1}^{m}\underbrace{{\sum_{k=1}^{K}y^k_i\log\mathbf{g}\bigr(\mathbf{x}_i\bigr)\bigr|_{T=1}}}_{\text{исходная функция потерь}}- \sum_{i=1}^{m}\underbrace{{\sum_{k=1}^{K}\mathbf{f}\bigr(\mathbf{x}_i\bigr)\bigr|_{T=T_0}\log\mathbf{g}\bigr(\mathbf{x}_i\bigr)\bigr|_{T=T_0}}}_{\text{слагаемое дистилляции}},
-\end{aligned}
-\setlength\belowdisplayskip{0pt}
-\]
-где~\ldots.
-
-Оптимальная модель выбирается из класса,
-$\hat{\mathbf{g}} = \arg\min\limits_{\mathbf{g} \in \mathfrak{G}_{\text{cl}}} \mathcal{L}\bigr(\mathbf{g}\bigr).$
+\begin{frame}{Quick comparison to sota-model}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.9\linewidth]{Screenshot 2024-12-20 at 15.51.52.png}
+        \label{fig:enter-label}
+    \end{figure}
 \end{frame}
 
-%----------------------------------------------------------------------------------------------------------
-\section{Анализ предложенного метода \ldots}
-\begin{frame}{Анализ предложенного метода \ldots}
-\justifying
-
-На графике показана зависимость значения параметров$w_i$ в зависимости от параметра~$l_1$-регуляризации~$C$.
-\begin{figure}[h!]
-\includegraphics[width=0.45\textwidth]{../figures/log_reg_cs_exp.eps}
-\includegraphics[width=0.45\textwidth]{../figures/log_reg_cs_exp.eps}
+\begin{frame}{Model architecture}
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{Screenshot 2024-10-11 at 12.42.18.png}
+    \label{fig:enter-label}
 \end{figure}
-
-С увеличением параметра регуляризации~$C$ число ненулевых параметров~$w_i$ уменьшается.
-
 \end{frame}
 
-%----------------------------------------------------------------------------------------------------------
-\section{Выводы}
-\begin{frame}{Выводы}
-\justifying
-	\begin{enumerate}
-	\justifying
-	    \item Предложен \ldots.
-        \item Доказаны теоремы \ldots, 
-        \begin{itemize}
-            \item[---] \ldots,
-            \item[---] \ldots.
-        \end{itemize}
-        \item Предложен метод \ldots
-        \begin{itemize}
-            \item[---] \ldots,
-            \item[---] \ldots.
-        \end{itemize}
-        \item Предложены методы \ldots
-        \begin{itemize}
-            \item[---] \ldots,
-            \item[---] \ldots.
-        \end{itemize}
-        \item Предложена вероятностная интерпретации \ldots.
-	\end{enumerate}
+\begin{frame}{Experiments}
+
+We evaluate the proposed model on the 20newsgroups dataset, which contains a collection of approximately 20,000 newsgroup documents, partitioned nearly evenly across 20 different newsgroups. We extracted approximately 70,000 unique words as vocabulary in bag-of-words format.
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{Screenshot 2024-11-22 at 18.04.36.png}
+    \caption{Quantiative results}
+    \label{fig:enter-label1}
+\end{figure}
 \end{frame}
-%----------------------------------------------------------------------------------------------------------
+
+\begin{frame}{Qualitative Experiments}
+    We analyze our outcomes in terms of top-k words, representing the topic, focusing on models with 10 topics. These particular examples demonstrate the same logic of clusterization in both models.\\
+
+\begin{multicols}{2}
+\section*{BigARTM, top-5 topic words}
+topic 1: max, q, r, g, p\\
+topic 2: one, would, say, people, write\\
+topic 3: game, team, line, subject, organization\\
+topic 4: would, people, write, gun, article\\
+topic 5: god, hell, atheist, line, subject\\
+topic 6: x, file, use, window, program\\
+topic 7: say, armenian, people, one, go\\
+topic 8: line, subject, get, organization, car\\
+topic 9: space, organization, subject, line, db\\
+topic 10: line, subject, organization, use, university\\
+
+\columnbreak
+
+\section*{Ours, top-5 topic words}
+topic 1: max, q, r, g, p\\
+topic 2: line, one, get, subject, use\\
+topic 3: god, would, say, one, people\\
+topic 4: line, subject, organization, university, article\\
+topic 5: game, team, line, drive, subject\\
+topic 6: say, armenian, one, go, people\\
+topic 7: x, file, line, use, subject\\
+topic 8: use, line, subject, organization, window\\
+topic 9: would, people, write, get, article\\
+topic 10: use, key, system, data, space\\
+\end{multicols}
+\end{frame}
+
 
 \end{document} 
