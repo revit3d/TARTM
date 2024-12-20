@@ -1,8 +1,7 @@
 import io
-import re
 from setuptools import setup, find_packages
 
-from mylib import __version__
+from pyartm import __version__
 
 def read(file_path):
     with io.open(file_path, 'r', encoding='utf-8') as f:
@@ -10,25 +9,19 @@ def read(file_path):
 
 
 readme = read('README.rst')
-# вычищаем локальные версии из файла requirements (согласно PEP440)
-requirements = '\n'.join(
-    re.findall(r'^([^\s^+]+).*$',
-               read('requirements.txt'),
-               flags=re.MULTILINE))
 
 
 setup(
     # metadata
-    name='mylib',
+    name='pyartm',
     version=__version__,
     license='MIT',
-    author='Andrey Grabovoy',
-    author_email="grabovoy.av@phystech.edu",
-    description='mylib, python package',
+    author='Diyakov Ilya',
+    author_email="s02210378@gse.cs.msu.ru",
+    description='Fast and flexible corpus decomposition model on PyTorch',
     long_description=readme,
     url='https://github.com/Intelligent-Systems-Phystech/ProjectTemplate',
 
     # options
     packages=find_packages(),
-    install_requires=requirements,
 )

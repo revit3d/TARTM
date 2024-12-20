@@ -5,17 +5,18 @@ Installation
 Requirements
 ============
 
-- Python 3.*
-- pip 20.0.2
+- Python >=3.8
+- poetry 1.8
 
-Installing by using PyPi
+Installation using poetry
 ========================
 
 Install
 -------
 .. code-block:: bash
 
-	git clone https://github.com/Intelligent-Systems-Phystech/ProjectTemplate.git /tmp/ProjectTemplate
+	git clone git@github.com:revit3d/TARTM.git /tmp/TARTM
+	cd src && poetry install
 	python3 -m pip install /tmp/ProjectTemplate/src/
 
 Uninstall
